@@ -32,19 +32,22 @@ export default async function handler(req, res) {
 
     const data = await response.json();
 
+    // Show OpenAI errors
     if (!response.ok) {
+      console.log(data);
       return res.status(response.status).json(data);
     }
 
-    return res.status(200).json({
-      reply: data.choices[0].message.content
-    });
+    // Get the AI response safely
+    const reply =
+      data.choices?.[0]?.message?.content || "Sorry, I couldn't generate a response.";
+
+    return res.status(200).json({ reply });
 
   } catch (error) {
     console.error(error);
-
     return res.status(500).json({
-      error: "Something went wrong."
+      reply: "Server error. Please try again."
     });
   }
 }
